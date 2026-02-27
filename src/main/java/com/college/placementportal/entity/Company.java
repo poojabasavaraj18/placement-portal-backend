@@ -2,6 +2,7 @@ package com.college.placementportal.entity;
 
 import jakarta.persistence.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Company {
@@ -15,6 +16,7 @@ public class Company {
     private String description;
 
     @OneToMany(mappedBy = "company")
+    @JsonIgnore
     private List<JobPost> jobPosts;
 
     // Getters & Setters

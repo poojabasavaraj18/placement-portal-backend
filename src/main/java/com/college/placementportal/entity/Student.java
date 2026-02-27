@@ -1,68 +1,9 @@
-// package com.college.placementportal.entity;
 
-// import jakarta.persistence.*;
-
-// @Entity
-// public class Student {
-
-//     @Id
-//     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//     private Long id;
-
-//     private String name;
-//     private String email;
-//     private String skills;
-//     private String placementStatus;
-
-//     @ManyToOne
-//     @JoinColumn(name = "department_id")
-//     private Department department;
-
-//     // Getters & Setters
-//     public Long getId() {
-//         return id;
-//     }
-
-//     public String getName() {
-//         return name;
-//     }
-
-//     public void setName(String name) {
-//         this.name = name;
-//     }
-
-//     public String getEmail() {
-//         return email;
-//     }
-
-//     public String getSkills() {
-//         return skills;
-//     }
-
-//     public void setSkills(String skills) {
-//         this.skills = skills;
-//     }
-
-//     public String getPlacementStatus() {
-//         return placementStatus;
-//     }
-
-//     public void setPlacementStatus(String placementStatus) {
-//         this.placementStatus = placementStatus;
-//     }
-
-//     public Department getDepartment() {
-//         return department;
-//     }
-
-//     public void setDepartment(Department department) {
-//         this.department = department;
-//     }
-// }
 package com.college.placementportal.entity;
 
 import jakarta.persistence.*;
 import java.util.Set;
+// import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class Student {

@@ -25,4 +25,5 @@ public class ApplicationController {
     public List<Application> getAllApplications() {
         return applicationService.getAllApplications();
     }
+    
 }
