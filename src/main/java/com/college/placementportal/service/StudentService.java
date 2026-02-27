@@ -10,6 +10,8 @@ import com.college.placementportal.entity.JobPost;
 import com.college.placementportal.entity.Skill;
 import com.college.placementportal.repository.StudentRepository;
 import com.college.placementportal.repository.JobPostRepository;
+import com.college.placementportal.dto.JobPostDTO;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -32,24 +34,21 @@ public class StudentService {
     }
 
     // 🔥 Recommendation Logic
-    public List<JobPost> recommendJobs(Long studentId) {
+   public List<JobPostDTO> recommendJobs(Long studentId) {
 
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+    Student student = studentRepository.findById(studentId)
+            .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        Set<Skill> studentSkills = student.getSkills();
-
-        List<JobPost> allJobs = jobPostRepository.findAll();
-
-        return allJobs.stream()
-                .filter(job -> {
-                    Set<Skill> required = job.getRequiredSkills();
-
-                    if (required == null || required.isEmpty()) return false;
-                    if (studentSkills == null || studentSkills.isEmpty()) return false;
-
-                    return studentSkills.containsAll(required);
-                })
-                .toList();
-    }
+    return jobPostRepository.findAll().stream()
+            .filter(job -> job.getRequiredSkills().stream()
+                    .anyMatch(skill -> student.getSkills().contains(skill)))
+            .map(job -> new JobPostDTO(
+                    job.getId(),
+                    job.getTitle(),
+                    job.getSalary(),
+                    job.getJobType(),
+                    job.getCompany().getName()
+            ))
+            .collect(Collectors.toList());
+}
 }

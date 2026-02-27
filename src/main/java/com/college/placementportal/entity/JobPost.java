@@ -2,6 +2,7 @@ package com.college.placementportal.entity;
 
 import jakarta.persistence.*;
 import java.util.Set;
+import jakarta.validation.constraints.*;
 
 @Entity
 public class JobPost {
@@ -10,9 +11,15 @@ public class JobPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-    private Double salary;
-    private String jobType; // Internship / Full-time
+    @NotBlank(message = "Title is required")
+private String title;
+
+@NotNull(message = "Salary is required")
+@Positive(message = "Salary must be positive")
+private Double salary;
+
+@NotBlank(message = "Job type is required")
+private String jobType;
 
     @ManyToOne
     @JoinColumn(name = "company_id")

@@ -3,7 +3,7 @@ package com.college.placementportal.entity;
 
 import jakarta.persistence.*;
 import java.util.Set;
-// import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.validation.constraints.*;
 
 @Entity
 public class Student {
@@ -12,9 +12,15 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private String email;
-    private String placementStatus;
+    @NotBlank(message = "Name is required")
+private String name;
+
+@NotBlank(message = "Email is required")
+@Email(message = "Invalid email format")
+private String email;
+
+@NotBlank(message = "Placement status is required")
+private String placementStatus;
 
     @ManyToOne
     @JoinColumn(name = "department_id")
