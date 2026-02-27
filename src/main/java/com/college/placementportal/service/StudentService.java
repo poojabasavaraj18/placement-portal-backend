@@ -3,11 +3,11 @@ package com.college.placementportal.service;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Set;
+// import java.util.Set;
 
 import com.college.placementportal.entity.Student;
-import com.college.placementportal.entity.JobPost;
-import com.college.placementportal.entity.Skill;
+// import com.college.placementportal.entity.JobPost;
+// import com.college.placementportal.entity.Skill;
 import com.college.placementportal.repository.StudentRepository;
 import com.college.placementportal.repository.JobPostRepository;
 import com.college.placementportal.dto.JobPostDTO;

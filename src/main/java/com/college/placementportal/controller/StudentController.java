@@ -4,11 +4,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import com.college.placementportal.dto.JobPostDTO;
-import com.college.placementportal.entity.JobPost;
+// import com.college.placementportal.entity.JobPost;
 import com.college.placementportal.entity.Student;
 import com.college.placementportal.service.StudentService;
 import jakarta.validation.Valid;
-import com.college.placementportal.dto.JobPostDTO;
+// import com.college.placementportal.dto.JobPostDTO;
 
 @RestController
 @RequestMapping("/students")
