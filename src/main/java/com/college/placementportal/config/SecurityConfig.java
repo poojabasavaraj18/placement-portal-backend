@@ -1,9 +1,8 @@
-
-
 package com.college.placementportal.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.*;
@@ -21,10 +20,27 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/companies/**").hasRole("ADMIN")
-                .requestMatchers("/jobposts/**").hasRole("ADMIN")
-                .requestMatchers("/applications/**").hasAnyRole("ADMIN", "STUDENT")
-                .requestMatchers("/students/**").hasAnyRole("ADMIN", "STUDENT")
+
+                // 🔒 ONLY ADMIN can update application status
+                .requestMatchers(HttpMethod.PUT, "/applications/*/status")
+                .hasRole("ADMIN")
+
+                // Applications access (apply, view)
+                .requestMatchers("/applications/**")
+                .hasAnyRole("ADMIN", "STUDENT")
+
+                // Only ADMIN can manage companies & job posts
+                .requestMatchers("/companies/**")
+                .hasRole("ADMIN")
+
+                .requestMatchers("/jobposts/**")
+                .hasRole("ADMIN")
+
+                // Students & Admin can view students
+                .requestMatchers("/students/**")
+                .hasAnyRole("ADMIN", "STUDENT")
+
+                // Everything else requires authentication
                 .anyRequest().authenticated()
             )
             .httpBasic(Customizer.withDefaults());

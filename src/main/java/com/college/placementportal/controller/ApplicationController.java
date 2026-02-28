@@ -1,9 +1,12 @@
 package com.college.placementportal.controller;
 
+import com.college.placementportal.dto.ApplicationResponseDTO;
 import com.college.placementportal.entity.Application;
 import com.college.placementportal.entity.ApplicationStatus;
 import com.college.placementportal.service.ApplicationService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -28,12 +31,15 @@ public class ApplicationController {
     }
 
     @GetMapping("/student/{studentId}")
-    public List<Application> getApplicationsByStudent(@PathVariable Long studentId) {
-        return applicationService.getApplicationsByStudent(studentId);
-    }
+public Page<ApplicationResponseDTO> getApplicationsByStudent(
+        @PathVariable Long studentId,
+        Pageable pageable) {
+
+    return applicationService.getApplicationsByStudent(studentId, pageable);
+}
 
     @GetMapping("/job/{jobId}")
-    public List<Application> getApplicationsByJob(@PathVariable Long jobId) {
+    public List<ApplicationResponseDTO> getApplicationsByJob(@PathVariable Long jobId) {
         return applicationService.getApplicationsByJob(jobId);
     }
 
