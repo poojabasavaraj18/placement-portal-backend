@@ -18,17 +18,15 @@ public class Application {
     @JoinColumn(name = "job_post_id")
     private JobPost jobPost;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status;
 
     private LocalDate appliedDate;
 
-    // Constructor
     public Application() {
         this.appliedDate = LocalDate.now();
-        this.status = "APPLIED";
+        this.status = ApplicationStatus.APPLIED;
     }
-
-    // Getters & Setters
 
     public Long getId() {
         return id;
@@ -50,11 +48,11 @@ public class Application {
         this.jobPost = jobPost;
     }
 
-    public String getStatus() {
+    public ApplicationStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ApplicationStatus status) {
         this.status = status;
     }
 

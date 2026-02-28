@@ -1,6 +1,7 @@
 package com.college.placementportal.service;
 
 import com.college.placementportal.entity.Application;
+import com.college.placementportal.entity.ApplicationStatus;
 import com.college.placementportal.repository.ApplicationRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +22,21 @@ public class ApplicationService {
 
     public List<Application> getAllApplications() {
         return applicationRepository.findAll();
+    }
+
+    public List<Application> getApplicationsByStudent(Long studentId) {
+        return applicationRepository.findByStudentId(studentId);
+    }
+
+    public List<Application> getApplicationsByJob(Long jobId) {
+        return applicationRepository.findByJobPostId(jobId);
+    }
+
+    public Application updateStatus(Long applicationId, ApplicationStatus status) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        application.setStatus(status);
+        return applicationRepository.save(application);
     }
 }

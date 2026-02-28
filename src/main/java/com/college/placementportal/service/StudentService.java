@@ -12,6 +12,8 @@ import com.college.placementportal.repository.StudentRepository;
 import com.college.placementportal.repository.JobPostRepository;
 import com.college.placementportal.dto.JobPostDTO;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class StudentService {
@@ -29,9 +31,10 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
+  
+public Page<Student> getAllStudents(Pageable pageable) {
+    return studentRepository.findAll(pageable);
+}
 
     // 🔥 Recommendation Logic
    public List<JobPostDTO> recommendJobs(Long studentId) {

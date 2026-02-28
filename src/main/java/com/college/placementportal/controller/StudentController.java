@@ -9,6 +9,8 @@ import com.college.placementportal.entity.Student;
 import com.college.placementportal.service.StudentService;
 import jakarta.validation.Valid;
 // import com.college.placementportal.dto.JobPostDTO;
+ import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/students")
@@ -25,9 +27,15 @@ public class StudentController {
         return studentService.saveStudent(student);
     }
 
+    // @GetMapping
+    // public List<Student> getAllStudents() {
+    //     return studentService.getAllStudents();
+    // }
+   
+
     @GetMapping
-    public List<Student> getAllStudents() {
-        return studentService.getAllStudents();
+    public Page<Student> getAllStudents(Pageable pageable) {
+        return studentService.getAllStudents(pageable);
     }
 
     @GetMapping("/{id}/recommended-jobs")
