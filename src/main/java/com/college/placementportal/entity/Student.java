@@ -13,29 +13,29 @@ public class Student {
     private Long id;
 
     @NotBlank(message = "Name is required")
-private String name;
+    private String name;
 
-@NotBlank(message = "Email is required")
-@Email(message = "Invalid email format")
-private String email;
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
+    private String email;
 
-@NotBlank(message = "Placement status is required")
-private String placementStatus;
+    @NotBlank(message = "Placement status is required")
+    private String placementStatus;
 
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
 
     @ManyToMany
-    @JoinTable(
-            name = "student_skills",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "skill_id")
-    )
+    @JoinTable(name = "student_skills", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private Set<Skill> skills;
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

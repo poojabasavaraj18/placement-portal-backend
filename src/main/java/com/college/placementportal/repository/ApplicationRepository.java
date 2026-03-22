@@ -10,9 +10,8 @@ import org.springframework.data.domain.Pageable;
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
 
-    // List<Application> findByStudentId(Long studentId);
-    Page<Application> findByStudentId(Long studentId, Pageable pageable);
+    Page<Application> findByStudent_Id(Long studentId, Pageable pageable);
 
-    List<Application> findByJobPostId(Long jobPostId);
+    List<Application> findByJobPost_Id(Long jobPostId);
 
 }

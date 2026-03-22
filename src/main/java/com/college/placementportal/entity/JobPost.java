@@ -12,29 +12,29 @@ public class JobPost {
     private Long id;
 
     @NotBlank(message = "Title is required")
-private String title;
+    private String title;
 
-@NotNull(message = "Salary is required")
-@Positive(message = "Salary must be positive")
-private Double salary;
+    @NotNull(message = "Salary is required")
+    @Positive(message = "Salary must be positive")
+    private Double salary;
 
-@NotBlank(message = "Job type is required")
-private String jobType;
+    @NotBlank(message = "Job type is required")
+    private String jobType;
 
     @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
 
     @ManyToMany
-    @JoinTable(
-            name = "jobpost_skills",
-            joinColumns = @JoinColumn(name = "jobpost_id"),
-            inverseJoinColumns = @JoinColumn(name = "skill_id")
-    )
+    @JoinTable(name = "jobpost_skills", joinColumns = @JoinColumn(name = "jobpost_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private Set<Skill> requiredSkills;
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {

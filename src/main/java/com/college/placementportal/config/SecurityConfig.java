@@ -11,6 +11,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+// import org.springframework.web.cors.configuration.CorsConfigurationSource;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfigurationSource;
+// import org.springframework.web.cors.CorsConfiguration;
+// import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+
 @Configuration
 public class SecurityConfig {
 
@@ -18,34 +27,51 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ CORS enabled
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
 
-                // 🔒 ONLY ADMIN can update application status
+                // 🔒 Only ADMIN can update status
                 .requestMatchers(HttpMethod.PUT, "/applications/*/status")
                 .hasRole("ADMIN")
 
-                // Applications access (apply, view)
+                // Applications
                 .requestMatchers("/applications/**")
                 .hasAnyRole("ADMIN", "STUDENT")
 
-                // Only ADMIN can manage companies & job posts
+                // Admin-only
                 .requestMatchers("/companies/**")
                 .hasRole("ADMIN")
 
                 .requestMatchers("/jobposts/**")
                 .hasRole("ADMIN")
 
-                // Students & Admin can view students
+                // Student + Admin
                 .requestMatchers("/students/**")
                 .hasAnyRole("ADMIN", "STUDENT")
 
-                // Everything else requires authentication
                 .anyRequest().authenticated()
             )
             .httpBasic(Customizer.withDefaults());
 
         return http.build();
+    }
+
+    // ✅ CORS CONFIGURATION (VERY IMPORTANT)
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
     }
 
     @Bean

@@ -33,27 +33,25 @@ public class ApplicationService {
     // 🔹 PAGINATED DTO for student
     public Page<ApplicationResponseDTO> getApplicationsByStudent(Long studentId, Pageable pageable) {
 
-        Page<Application> applications =
-                applicationRepository.findByStudentId(studentId, pageable);
+        Page<Application> applications = applicationRepository.findByStudent_Id(studentId, pageable);
 
-        List<ApplicationResponseDTO> dtoList =
-                applications.stream()
-                        .map(app -> new ApplicationResponseDTO(
-                                app.getId(),
-                                app.getStudent().getName(),
-                                app.getJobPost().getTitle(),
-                                app.getJobPost().getCompany().getName(),
-                                app.getStatus().name(),
-                                app.getAppliedDate()
-                        ))
-                        .toList();
+        List<ApplicationResponseDTO> dtoList = applications.stream()
+                .map(app -> new ApplicationResponseDTO(
+                        app.getId(),
+                        app.getStudent().getName(),
+                        app.getJobPost().getTitle(),
+                        app.getJobPost().getCompany().getName(),
+                        app.getStatus().name(),
+                        app.getAppliedDate()))
+                .toList();
 
         return new PageImpl<>(dtoList, pageable, applications.getTotalElements());
     }
 
     // 🔹 DTO for job applicants
+    // 🔹 DTO for job applicants
     public List<ApplicationResponseDTO> getApplicationsByJob(Long jobId) {
-        return applicationRepository.findByJobPostId(jobId)
+        return applicationRepository.findByJobPost_Id(jobId)
                 .stream()
                 .map(app -> new ApplicationResponseDTO(
                         app.getId(),
@@ -61,8 +59,7 @@ public class ApplicationService {
                         app.getJobPost().getTitle(),
                         app.getJobPost().getCompany().getName(),
                         app.getStatus().name(),
-                        app.getAppliedDate()
-                ))
+                        app.getAppliedDate()))
                 .collect(Collectors.toList());
     }
 
