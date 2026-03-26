@@ -1,7 +1,6 @@
 package com.college.placementportal.entity;
 
 import jakarta.persistence.*;
-import java.util.Set;
 import jakarta.validation.constraints.*;
 
 @Entity
@@ -11,69 +10,112 @@ public class JobPost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Title is required")
+    // 💼 Basic Info
+    @NotBlank
     private String title;
 
-    @NotNull(message = "Salary is required")
-    @Positive(message = "Salary must be positive")
+    @NotBlank
+    private String companyName;
+
+    private String companyDescription;
+
+    @NotBlank
+    private String location; // Remote / Onsite / Hybrid
+
+    // 💰 Job Details
+    @NotNull
     private Double salary;
 
-    @NotBlank(message = "Job type is required")
-    private String jobType;
+    @NotBlank
+    private String jobType; // Full-time / Internship
 
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
+    private String bond; // Yes/No + details
 
-    @ManyToMany
-    @JoinTable(name = "jobpost_skills", joinColumns = @JoinColumn(name = "jobpost_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
-    private Set<Skill> requiredSkills;
+    // 🧠 Requirements
+    private String skillsRequired;
 
-    public Long getId() {
-        return id;
-    }
+    private Double minCgpa;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private String experienceRequired;
 
-    public String getTitle() {
-        return title;
-    }
+    // 📄 Description
+    @Column(length = 2000)
+    private String jobDescription;
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    @Column(length = 2000)
+    private String responsibilities;
 
-    public Double getSalary() {
-        return salary;
-    }
+    @Column(length = 2000)
+    private String eligibilityCriteria;
 
-    public void setSalary(Double salary) {
-        this.salary = salary;
-    }
+    // ⏰ Extra
+    private String deadline;
 
-    public String getJobType() {
-        return jobType;
-    }
+    private Integer openings;
 
-    public void setJobType(String jobType) {
-        this.jobType = jobType;
-    }
+    // ===== Getters & Setters =====
 
-    public Company getCompany() {
-        return company;
-    }
+    public Long getId() { return id; }
 
-    public void setCompany(Company company) {
-        this.company = company;
-    }
+    public void setId(Long id) { this.id = id; }
 
-    public Set<Skill> getRequiredSkills() {
-        return requiredSkills;
-    }
+    public String getTitle() { return title; }
 
-    public void setRequiredSkills(Set<Skill> requiredSkills) {
-        this.requiredSkills = requiredSkills;
-    }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getCompanyName() { return companyName; }
+
+    public void setCompanyName(String companyName) { this.companyName = companyName; }
+
+    public String getCompanyDescription() { return companyDescription; }
+
+    public void setCompanyDescription(String companyDescription) { this.companyDescription = companyDescription; }
+
+    public String getLocation() { return location; }
+
+    public void setLocation(String location) { this.location = location; }
+
+    public Double getSalary() { return salary; }
+
+    public void setSalary(Double salary) { this.salary = salary; }
+
+    public String getJobType() { return jobType; }
+
+    public void setJobType(String jobType) { this.jobType = jobType; }
+
+    public String getBond() { return bond; }
+
+    public void setBond(String bond) { this.bond = bond; }
+
+    public String getSkillsRequired() { return skillsRequired; }
+
+    public void setSkillsRequired(String skillsRequired) { this.skillsRequired = skillsRequired; }
+
+    public Double getMinCgpa() { return minCgpa; }
+
+    public void setMinCgpa(Double minCgpa) { this.minCgpa = minCgpa; }
+
+    public String getExperienceRequired() { return experienceRequired; }
+
+    public void setExperienceRequired(String experienceRequired) { this.experienceRequired = experienceRequired; }
+
+    public String getJobDescription() { return jobDescription; }
+
+    public void setJobDescription(String jobDescription) { this.jobDescription = jobDescription; }
+
+    public String getResponsibilities() { return responsibilities; }
+
+    public void setResponsibilities(String responsibilities) { this.responsibilities = responsibilities; }
+
+    public String getEligibilityCriteria() { return eligibilityCriteria; }
+
+    public void setEligibilityCriteria(String eligibilityCriteria) { this.eligibilityCriteria = eligibilityCriteria; }
+
+    public String getDeadline() { return deadline; }
+
+    public void setDeadline(String deadline) { this.deadline = deadline; }
+
+    public Integer getOpenings() { return openings; }
+
+    public void setOpenings(Integer openings) { this.openings = openings; }
 }

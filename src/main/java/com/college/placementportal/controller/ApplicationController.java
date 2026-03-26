@@ -170,7 +170,7 @@ public class ApplicationController {
             @RequestParam String name,
             @RequestParam String email,
             @RequestParam String phone,
-            @RequestParam String cgpa,
+            @RequestParam Double cgpa,
             @RequestParam(required = false) String skills,
             @RequestParam(required = false) String experience,
             @RequestParam String coverLetter

@@ -9,17 +9,22 @@ import java.util.List;
 @Service
 public class JobPostService {
 
-    private final JobPostRepository jobPostRepository;
+    private final JobPostRepository repository;
 
-    public JobPostService(JobPostRepository jobPostRepository) {
-        this.jobPostRepository = jobPostRepository;
+    public JobPostService(JobPostRepository repository) {
+        this.repository = repository;
     }
 
     public JobPost saveJobPost(JobPost jobPost) {
-        return jobPostRepository.save(jobPost);
+        return repository.save(jobPost);
     }
 
     public List<JobPost> getAllJobPosts() {
-        return jobPostRepository.findAll();
+        return repository.findAll();
+    }
+
+    public JobPost getJobPostById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
     }
 }

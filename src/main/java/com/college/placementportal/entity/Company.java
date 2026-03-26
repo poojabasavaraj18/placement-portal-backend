@@ -15,9 +15,9 @@ public class Company {
     private String hrEmail;
     private String description;
 
-    @OneToMany(mappedBy = "company")
-    @JsonIgnore
-    private List<JobPost> jobPosts;
+    // @OneToMany(mappedBy = "company")
+    // @JsonIgnore
+    // private List<JobPost> jobPosts;
 
     // Getters & Setters
     public Long getId() { return id; }
@@ -31,5 +31,5 @@ public class Company {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public List<JobPost> getJobPosts() { return jobPosts; }
+    // public List<JobPost> getJobPosts() { return jobPosts; }
 }

@@ -1,17 +1,14 @@
-
 package com.college.placementportal.service;
 
 import org.springframework.stereotype.Service;
 import java.util.List;
-// import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.college.placementportal.entity.Student;
-// import com.college.placementportal.entity.JobPost;
-// import com.college.placementportal.entity.Skill;
 import com.college.placementportal.repository.StudentRepository;
 import com.college.placementportal.repository.JobPostRepository;
 import com.college.placementportal.dto.JobPostDTO;
-import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -27,31 +24,40 @@ public class StudentService {
         this.jobPostRepository = jobPostRepository;
     }
 
+    // ✅ Save student
     public Student saveStudent(Student student) {
         return studentRepository.save(student);
     }
 
-  
-public Page<Student> getAllStudents(Pageable pageable) {
-    return studentRepository.findAll(pageable);
-}
+    // ✅ Get all students (paginated)
+    public Page<Student> getAllStudents(Pageable pageable) {
+        return studentRepository.findAll(pageable);
+    }
 
-    // 🔥 Recommendation Logic
-   public List<JobPostDTO> recommendJobs(Long studentId) {
+    // 🔥 Recommendation Logic (UPDATED)
+    public List<JobPostDTO> recommendJobs(Long studentId) {
 
-    Student student = studentRepository.findById(studentId)
-            .orElseThrow(() -> new RuntimeException("Student not found"));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
 
-    return jobPostRepository.findAll().stream()
-            .filter(job -> job.getRequiredSkills().stream()
-                    .anyMatch(skill -> student.getSkills().contains(skill)))
-            .map(job -> new JobPostDTO(
-                    job.getId(),
-                    job.getTitle(),
-                    job.getSalary(),
-                    job.getJobType(),
-                    job.getCompany().getName()
-            ))
-            .collect(Collectors.toList());
-}
+        return jobPostRepository.findAll().stream()
+                .filter(job -> {
+                    if (job.getSkillsRequired() == null) return false;
+
+                    String jobSkills = job.getSkillsRequired().toLowerCase();
+
+                    return student.getSkills().stream()
+                            .anyMatch(skill ->
+                                    jobSkills.contains(skill.toLowerCase())
+                            );
+                })
+                .map(job -> new JobPostDTO(
+                        job.getId(),
+                        job.getTitle(),
+                        job.getSalary(),
+                        job.getJobType(),
+                        job.getCompanyName() // ✅ FIXED
+                ))
+                .collect(Collectors.toList());
+    }
 }

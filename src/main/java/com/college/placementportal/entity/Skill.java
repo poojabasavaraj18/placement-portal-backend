@@ -16,8 +16,8 @@ public class Skill {
     @ManyToMany(mappedBy = "skills")
     private Set<Student> students;
 
-    @ManyToMany(mappedBy = "requiredSkills")
-    private Set<JobPost> jobPosts;
+    // @ManyToMany(mappedBy = "requiredSkills")
+    // private Set<JobPost> jobPosts;
 
     public Skill() {}
 
@@ -35,5 +35,10 @@ public class Skill {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public CharSequence toLowerCase() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toLowerCase'");
     }
 }

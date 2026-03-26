@@ -34,7 +34,7 @@ public class Application {
     private String name;
     private String email;
     private String phone;
-    private String cgpa;
+    private Double cgpa;
     private String skills;
     private String experience;
 
@@ -113,12 +113,12 @@ public class Application {
         this.phone = phone;
     }
 
-    public String getCgpa() {
+    public Double getCgpa() {
         return cgpa;
     }
 
-    public void setCgpa(String cgpa) {
-        this.cgpa = cgpa;
+    public void setCgpa(Double cgpa2) {
+        this.cgpa = cgpa2;
     }
 
     public String getSkills() {

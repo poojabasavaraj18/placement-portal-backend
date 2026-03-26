@@ -22,15 +22,17 @@ public class ApplicationService {
         this.applicationRepository = applicationRepository;
     }
 
+    // ✅ Apply for job
     public Application apply(Application application) {
         return applicationRepository.save(application);
     }
 
+    // ✅ Get all applications
     public List<Application> getAllApplications() {
         return applicationRepository.findAll();
     }
 
-    // 🔹 PAGINATED DTO for student
+    // ✅ Get applications by student (PAGINATED)
     public Page<ApplicationResponseDTO> getApplicationsByStudent(Long studentId, Pageable pageable) {
 
         Page<Application> applications = applicationRepository.findByStudent_Id(studentId, pageable);
@@ -40,7 +42,7 @@ public class ApplicationService {
                         app.getId(),
                         app.getStudent().getName(),
                         app.getJobPost().getTitle(),
-                        app.getJobPost().getCompany().getName(),
+                        app.getJobPost().getCompanyName(), // ✅ FIXED
                         app.getStatus().name(),
                         app.getAppliedDate()))
                 .toList();
@@ -48,8 +50,7 @@ public class ApplicationService {
         return new PageImpl<>(dtoList, pageable, applications.getTotalElements());
     }
 
-    // 🔹 DTO for job applicants
-    // 🔹 DTO for job applicants
+    // ✅ Get applications for a job (for recruiter)
     public List<ApplicationResponseDTO> getApplicationsByJob(Long jobId) {
         return applicationRepository.findByJobPost_Id(jobId)
                 .stream()
@@ -57,12 +58,13 @@ public class ApplicationService {
                         app.getId(),
                         app.getStudent().getName(),
                         app.getJobPost().getTitle(),
-                        app.getJobPost().getCompany().getName(),
+                        app.getJobPost().getCompanyName(), // ✅ FIXED
                         app.getStatus().name(),
                         app.getAppliedDate()))
                 .collect(Collectors.toList());
     }
 
+    // ✅ Update status (rounds, accept, reject)
     public Application updateStatus(Long applicationId, ApplicationStatus status) {
         Application application = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new RuntimeException("Application not found"));

@@ -8,6 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/jobposts")
+@CrossOrigin(origins = "http://localhost:3000")
 public class JobPostController {
 
     private final JobPostService jobPostService;
@@ -24,5 +25,10 @@ public class JobPostController {
     @GetMapping
     public List<JobPost> getAllJobPosts() {
         return jobPostService.getAllJobPosts();
+    }
+
+    @GetMapping("/{id}")
+    public JobPost getJobById(@PathVariable Long id) {
+        return jobPostService.getJobPostById(id);
     }
 }
