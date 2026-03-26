@@ -252,7 +252,7 @@ public class ApplicationController {
 
     // 🏢 JOB APPLICATIONS
     @GetMapping("/job/{jobId}")
-    public List<ApplicationResponseDTO> getApplicationsByJob(@PathVariable Long jobId) {
+    public List<Application> getApplicationsByJob(@PathVariable Long jobId) {
         return applicationService.getApplicationsByJob(jobId);
     }
 
