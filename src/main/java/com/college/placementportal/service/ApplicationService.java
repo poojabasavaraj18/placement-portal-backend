@@ -67,7 +67,8 @@ public class ApplicationService {
                         app.getJobPost().getTitle(),
                         app.getJobPost().getCompanyName(),
                         app.getStatus().name(),
-                        app.getAppliedDate()))
+                        app.getAppliedDate(),
+                     app.getJobPost().getId()))
                 .toList();
 
         return new PageImpl<>(dtoList, pageable, applications.getTotalElements());
@@ -79,11 +80,51 @@ public class ApplicationService {
     }
 
     // 🔥 UPDATE STATUS
-    public Application updateStatus(Long applicationId, ApplicationStatus status) {
-        Application application = applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new RuntimeException("Application not found"));
+   public Application updateStatus(Long applicationId, ApplicationStatus status) {
 
-        application.setStatus(status);
-        return applicationRepository.save(application);
+    Application application = applicationRepository.findById(applicationId)
+            .orElseThrow(() -> new RuntimeException("Application not found"));
+
+    ApplicationStatus currentStatus = application.getStatus();
+
+    // 🚨 Prevent invalid transitions
+    if (currentStatus == ApplicationStatus.REJECTED || currentStatus == ApplicationStatus.SELECTED) {
+        throw new RuntimeException("Cannot update status after final decision");
     }
+
+    // 🚨 Optional: enforce proper flow
+    switch (status) {
+        case ROUND1:
+            if (currentStatus != ApplicationStatus.APPLIED) {
+                throw new RuntimeException("Must be APPLIED to move to ROUND1");
+            }
+            break;
+
+        case ROUND2:
+            if (currentStatus != ApplicationStatus.ROUND1) {
+                throw new RuntimeException("Must complete ROUND1 first");
+            }
+            break;
+
+        case HR:
+            if (currentStatus != ApplicationStatus.ROUND2) {
+                throw new RuntimeException("Must complete ROUND2 first");
+            }
+            break;
+
+        case SELECTED:
+        case REJECTED:
+            if (currentStatus != ApplicationStatus.HR) {
+                throw new RuntimeException("Final decision only after HR round");
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    application.setStatus(status);
+
+    return applicationRepository.save(application);
+}
 }
