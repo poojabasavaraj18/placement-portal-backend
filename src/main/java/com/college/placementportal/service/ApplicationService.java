@@ -1,78 +1,3 @@
-// package com.college.placementportal.service;
-
-// import com.college.placementportal.entity.Application;
-// import com.college.placementportal.entity.ApplicationStatus;
-// import com.college.placementportal.repository.ApplicationRepository;
-// import com.college.placementportal.dto.ApplicationResponseDTO;
-
-// import org.springframework.stereotype.Service;
-// import org.springframework.data.domain.Page;
-// import org.springframework.data.domain.Pageable;
-// import org.springframework.data.domain.PageImpl;
-
-// import java.util.List;
-// import java.util.stream.Collectors;
-
-// @Service
-// public class ApplicationService {
-
-//     private final ApplicationRepository applicationRepository;
-
-//     public ApplicationService(ApplicationRepository applicationRepository) {
-//         this.applicationRepository = applicationRepository;
-//     }
-
-//     // ✅ Apply for job
-//     public Application apply(Application application) {
-//         return applicationRepository.save(application);
-//     }
-
-//     // ✅ Get all applications
-//     public List<Application> getAllApplications() {
-//         return applicationRepository.findAll();
-//     }
-
-//     // ✅ Get applications by student (PAGINATED)
-//     public Page<ApplicationResponseDTO> getApplicationsByStudent(Long studentId, Pageable pageable) {
-
-//         Page<Application> applications = applicationRepository.findByStudent_Id(studentId, pageable);
-
-//         List<ApplicationResponseDTO> dtoList = applications.stream()
-//                 .map(app -> new ApplicationResponseDTO(
-//                         app.getId(),
-//                         app.getStudent().getName(),
-//                         app.getJobPost().getTitle(),
-//                         app.getJobPost().getCompanyName(), // ✅ FIXED
-//                         app.getStatus().name(),
-//                         app.getAppliedDate()))
-//                 .toList();
-
-//         return new PageImpl<>(dtoList, pageable, applications.getTotalElements());
-//     }
-
-//     // ✅ Get applications for a job (for recruiter)
-// {
-//         return applicationRepository.findByJobPost_Id(jobId)
-//                 .stream()
-//                 .map(app -> new ApplicationResponseDTO(
-//                         app.getId(),
-//                         app.getStudent().getName(),
-//                         app.getJobPost().getTitle(),
-//                         app.getJobPost().getCompanyName(), // ✅ FIXED
-//                         app.getStatus().name(),
-//                         app.getAppliedDate()))
-//                 .collect(Collectors.toList());
-//     }
-
-//     // ✅ Update status (rounds, accept, reject)
-//     public Application updateStatus(Long applicationId, ApplicationStatus status) {
-//         Application application = applicationRepository.findById(applicationId)
-//                 .orElseThrow(() -> new RuntimeException("Application not found"));
-
-//         application.setStatus(status);
-//         return applicationRepository.save(application);
-//     }
-// }
 package com.college.placementportal.service;
 
 import com.college.placementportal.entity.Application;
@@ -84,9 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -97,17 +24,38 @@ public class ApplicationService {
         this.applicationRepository = applicationRepository;
     }
 
-    // ✅ APPLY
-    public Application apply(Application application) {
+    // 🔥 APPLY WITH FILE UPLOAD (UPDATED)
+    public Application apply(Application application, MultipartFile file) throws IOException {
+
+        // ✅ Create uploads folder dynamically
+        String uploadDir = System.getProperty("user.dir") + "/uploads/";
+
+        File folder = new File(uploadDir);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
+        // ✅ Clean filename
+        String fileName = System.currentTimeMillis() + "_" +
+                file.getOriginalFilename().replaceAll("\\s+", "_");
+
+        // ✅ Save file
+        String filePath = uploadDir + fileName;
+        file.transferTo(new File(filePath));
+
+        // ✅ Save only filename in DB
+        application.setResumePath(fileName);
+        application.setStatus(ApplicationStatus.APPLIED);
+
         return applicationRepository.save(application);
     }
 
-    // ✅ ALL APPLICATIONS (optional)
+    // ✅ ALL APPLICATIONS
     public List<Application> getAllApplications() {
         return applicationRepository.findAll();
     }
 
-    // 🔹 STUDENT VIEW (KEEP DTO)
+    // 🔹 STUDENT VIEW
     public Page<ApplicationResponseDTO> getApplicationsByStudent(Long studentId, Pageable pageable) {
 
         Page<Application> applications = applicationRepository.findByStudent_Id(studentId, pageable);
@@ -125,7 +73,7 @@ public class ApplicationService {
         return new PageImpl<>(dtoList, pageable, applications.getTotalElements());
     }
 
-    // 🔥 RECRUITER VIEW (FULL DATA — IMPORTANT)
+    // 🔥 RECRUITER VIEW
     public List<Application> getApplicationsByJob(Long jobId) {
         return applicationRepository.findByJobPost_Id(jobId);
     }

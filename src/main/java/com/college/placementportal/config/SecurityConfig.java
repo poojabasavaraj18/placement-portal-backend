@@ -11,12 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-// import org.springframework.web.cors.configuration.CorsConfigurationSource;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
-// import org.springframework.web.cors.CorsConfiguration;
-// import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
@@ -27,9 +24,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ CORS enabled
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+
+                // ✅ VERY IMPORTANT: Allow file access (RESUME FIX)
+                .requestMatchers("/files/**").permitAll()
 
                 // 🔒 Only ADMIN can update status
                 .requestMatchers(HttpMethod.PUT, "/applications/*/status")
@@ -50,6 +50,7 @@ public class SecurityConfig {
                 .requestMatchers("/students/**")
                 .hasAnyRole("ADMIN", "STUDENT")
 
+                // Everything else requires login
                 .anyRequest().authenticated()
             )
             .httpBasic(Customizer.withDefaults());
@@ -57,7 +58,7 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // ✅ CORS CONFIGURATION (VERY IMPORTANT)
+    // ✅ CORS CONFIGURATION
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
