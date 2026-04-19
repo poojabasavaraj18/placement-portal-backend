@@ -95,13 +95,16 @@ public class CDCService {
     for (Application app : applications) {
 
         CDCApplicationDTO dto = new CDCApplicationDTO();
-
+        dto.setApplicationId(app.getId());
         dto.setStudentName(app.getName());
         dto.setJobTitle(app.getJobPost().getTitle());
         dto.setStatus(app.getStatus().name());
         dto.setResumePath(app.getResumePath());
         dto.setCgpa(app.getCgpa());
         dto.setSkills(app.getSkills());
+        dto.setApplicationId(app.getId());  // 🔥 VERY IMPORTANT
+        dto.setCompanyName(app.getJobPost().getCompanyName());
+dto.setSalary(app.getJobPost().getSalary());
 
         list.add(dto);
     }
@@ -118,13 +121,17 @@ public class CDCService {
         if (app.getJobPost().getId().equals(jobId)) {
 
             CDCApplicationDTO dto = new CDCApplicationDTO();
-
+            
+            dto.setApplicationId(app.getId()); 
             dto.setStudentName(app.getName());
             dto.setJobTitle(app.getJobPost().getTitle());
             dto.setStatus(app.getStatus().name());
             dto.setResumePath(app.getResumePath());
             dto.setCgpa(app.getCgpa());
             dto.setSkills(app.getSkills());
+            // 🔥 THIS IS WHAT YOU MISSED
+            dto.setCompanyName(app.getJobPost().getCompanyName());
+            dto.setSalary(app.getJobPost().getSalary());
 
             list.add(dto);
         }
@@ -156,7 +163,10 @@ public class CDCService {
         dto.setJobId(job.getId());
         dto.setJobTitle(job.getTitle());
         dto.setAppliedCount(countMap.getOrDefault(job.getId(), 0L));
-
+        dto.setCompanyName(job.getCompanyName());
+        dto.setSalary(job.getSalary());
+        dto.setCompanyName(job.getCompanyName());
+dto.setSalary(job.getSalary());
         result.add(dto);
     }
 

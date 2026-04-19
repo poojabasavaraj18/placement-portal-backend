@@ -5,6 +5,8 @@ public class JobSummaryDTO {
     private Long jobId;
     private String jobTitle;
     private long appliedCount;
+    private String companyName;
+    private Double salary;
 
     // getters and setters
 
@@ -30,5 +32,21 @@ public class JobSummaryDTO {
 
     public void setAppliedCount(long appliedCount) {
         this.appliedCount = appliedCount;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public Double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(Double salary) {
+        this.salary = salary;
     }
 }

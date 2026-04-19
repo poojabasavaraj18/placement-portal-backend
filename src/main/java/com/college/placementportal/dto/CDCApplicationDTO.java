@@ -8,7 +8,9 @@ public class CDCApplicationDTO {
     private String resumePath;
     private Double cgpa;
     private String skills;
-
+    private Long applicationId;
+    private String companyName;
+private Double salary;
     // Getters & Setters
 
     public String getStudentName() { return studentName; }
@@ -28,4 +30,17 @@ public class CDCApplicationDTO {
 
     public String getSkills() { return skills; }
     public void setSkills(String skills) { this.skills = skills; }
+    public Long getApplicationId() {
+    return applicationId;
+}
+
+public void setApplicationId(Long applicationId) {
+    this.applicationId = applicationId;
+}
+
+public String getCompanyName() { return companyName; }
+public void setCompanyName(String companyName) { this.companyName = companyName; }
+
+public Double getSalary() { return salary; }
+public void setSalary(Double salary) { this.salary = salary; }
 }
