@@ -20,6 +20,7 @@ public class Application {
     @JoinColumn(name = "job_post_id")
     private JobPost jobPost;
 
+    
     // 📌 Status
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;

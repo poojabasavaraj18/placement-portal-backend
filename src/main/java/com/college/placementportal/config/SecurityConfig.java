@@ -19,44 +19,60 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfig {
+       @Bean
+public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http
+        .csrf(csrf -> csrf.disable())
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .authorizeHttpRequests(auth -> auth
+            .anyRequest().permitAll()   // 🔥 allow everything
+        )
+        .httpBasic(httpBasic -> httpBasic.disable()); // 🔥 disable auth
 
-        http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth
+    return http.build();
+}
+//     @Bean
+// public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-                // ✅ VERY IMPORTANT: Allow file access (RESUME FIX)
-                .requestMatchers("/files/**").permitAll()
+//     http
+//         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//         .csrf(csrf -> csrf.disable())
+//         .authorizeHttpRequests(auth -> auth
 
-                // 🔒 Only ADMIN can update status
-                .requestMatchers(HttpMethod.PUT, "/applications/*/status")
-                .hasRole("ADMIN")
+//             // 🔥 ADD THIS LINE (CDC access)
+//             .requestMatchers("/cdc/**").permitAll()
 
-                // Applications
-                .requestMatchers("/applications/**")
-                .hasAnyRole("ADMIN", "STUDENT")
+//             // ✅ Allow file access
+//             .requestMatchers("/files/**").permitAll()
 
-                // Admin-only
-                .requestMatchers("/companies/**")
-                .hasRole("ADMIN")
+//             // 🔒 Only ADMIN can update status
+//             .requestMatchers(HttpMethod.PUT, "/applications/*/status")
+//             .hasRole("ADMIN")
 
-                .requestMatchers("/jobposts/**")
-                .hasRole("ADMIN")
+//             // Applications
+//             .requestMatchers("/applications/**")
+//             .hasAnyRole("ADMIN", "STUDENT")
 
-                // Student + Admin
-                .requestMatchers("/students/**")
-                .hasAnyRole("ADMIN", "STUDENT")
+//             // Admin-only
+//             .requestMatchers("/companies/**")
+//             .hasRole("ADMIN")
 
-                // Everything else requires login
-                .anyRequest().authenticated()
-            )
-            .httpBasic(Customizer.withDefaults());
+//             .requestMatchers("/jobposts/**")
+//             .hasRole("ADMIN")
 
-        return http.build();
-    }
+//             // Student + Admin
+//             .requestMatchers("/students/**")
+//             .hasAnyRole("ADMIN", "STUDENT")
+
+//             // Everything else requires login
+//             // .anyRequest().authenticated()
+//             .anyRequest().permitAll()
+//         )
+//         .httpBasic(Customizer.withDefaults());
+
+//     return http.build();
+// }
 
     // ✅ CORS CONFIGURATION
     @Bean
