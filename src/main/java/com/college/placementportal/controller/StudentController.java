@@ -24,8 +24,12 @@ public class StudentController {
     }
 
     // ✅ Register student
+    
+
     @PostMapping("/register")
-    public Student createStudent(@Valid @RequestBody Student student) {
+    public Student register(@RequestBody Student student) {
+        student.setPlacementStatus("ACTIVE");
+        student.setRole("STUDENT"); // 🔥 important
         return studentService.saveStudent(student);
     }
 

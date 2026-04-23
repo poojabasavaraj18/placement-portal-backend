@@ -12,24 +12,37 @@ import com.college.placementportal.dto.JobPostDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+// 🔥 IMPORT THIS
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 @Service
 public class StudentService {
 
     private final StudentRepository studentRepository;
     private final JobPostRepository jobPostRepository;
 
+    // 🔥 ADD THIS
+    private final PasswordEncoder passwordEncoder;
+
+    // 🔥 UPDATE CONSTRUCTOR
     public StudentService(StudentRepository studentRepository,
-                          JobPostRepository jobPostRepository) {
+                          JobPostRepository jobPostRepository,
+                          PasswordEncoder passwordEncoder) {
         this.studentRepository = studentRepository;
         this.jobPostRepository = jobPostRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    // ✅ Register / Save Student
+    // ✅ Register / Save Student (ENCRYPT PASSWORD)
     public Student saveStudent(Student student) {
+
+        // 🔥 Encrypt before saving
+        student.setPassword(passwordEncoder.encode(student.getPassword()));
+
         return studentRepository.save(student);
     }
 
-    // ✅ Login Logic
+    // ✅ Login Logic (SECURE)
     public Student login(String email, String password) {
 
         Student student = studentRepository.findByEmail(email);
@@ -38,7 +51,8 @@ public class StudentService {
             throw new RuntimeException("Student not found");
         }
 
-        if (!student.getPassword().equals(password)) {
+        // 🔥 USE matches() instead of equals()
+        if (!passwordEncoder.matches(password, student.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
 

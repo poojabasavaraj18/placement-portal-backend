@@ -12,6 +12,9 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    
+
     // 👤 Basic Info
     @NotBlank(message = "Name is required")
     private String name;
