@@ -12,7 +12,7 @@ import com.college.placementportal.dto.JobPostDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-// 🔥 IMPORT THIS
+// 🔐 Password Encoder
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Service
@@ -20,11 +20,9 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
     private final JobPostRepository jobPostRepository;
-
-    // 🔥 ADD THIS
     private final PasswordEncoder passwordEncoder;
 
-    // 🔥 UPDATE CONSTRUCTOR
+    // ✅ Constructor Injection
     public StudentService(StudentRepository studentRepository,
                           JobPostRepository jobPostRepository,
                           PasswordEncoder passwordEncoder) {
@@ -33,25 +31,28 @@ public class StudentService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // ✅ Register / Save Student (ENCRYPT PASSWORD)
+    // ✅ REGISTER (always encrypt password)
     public Student saveStudent(Student student) {
 
-        // 🔥 Encrypt before saving
-        student.setPassword(passwordEncoder.encode(student.getPassword()));
+        // 🔥 Prevent double-encoding (important for admin-created users too)
+        if (student.getPassword() != null && !student.getPassword().startsWith("$2a$")) {
+            student.setPassword(passwordEncoder.encode(student.getPassword()));
+        }
 
         return studentRepository.save(student);
     }
 
-    // ✅ Login Logic (SECURE)
+    // ✅ LOGIN (secure + null-safe)
     public Student login(String email, String password) {
 
         Student student = studentRepository.findByEmail(email);
 
+        // ✅ Always check null FIRST
         if (student == null) {
-            throw new RuntimeException("Student not found");
+            throw new RuntimeException("User not found");
         }
 
-        // 🔥 USE matches() instead of equals()
+        // 🔥 Compare encrypted password
         if (!passwordEncoder.matches(password, student.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
@@ -59,12 +60,12 @@ public class StudentService {
         return student;
     }
 
-    // ✅ Get all students (pagination)
+    // ✅ GET ALL STUDENTS
     public Page<Student> getAllStudents(Pageable pageable) {
         return studentRepository.findAll(pageable);
     }
 
-    // 🔥 Job Recommendation Logic
+    // 🔥 JOB RECOMMENDATION
     public List<JobPostDTO> recommendJobs(Long studentId) {
 
         Student student = studentRepository.findById(studentId)
@@ -72,7 +73,7 @@ public class StudentService {
 
         return jobPostRepository.findAll().stream()
                 .filter(job -> {
-                    if (job.getSkillsRequired() == null) return false;
+                    if (job.getSkillsRequired() == null || student.getSkills() == null) return false;
 
                     String jobSkills = job.getSkillsRequired().toLowerCase();
 
