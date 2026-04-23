@@ -7,10 +7,11 @@ import com.college.placementportal.dto.JobPostDTO;
 import com.college.placementportal.entity.Student;
 import com.college.placementportal.service.StudentService;
 
-import jakarta.validation.Valid;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+// 🔥 NEW IMPORTS
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/students")
@@ -23,31 +24,46 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    // ✅ Register student
-    
-
+    // ✅ REGISTER
     @PostMapping("/register")
-    public Student register(@RequestBody Student student) {
-        student.setPlacementStatus("ACTIVE");
-        student.setRole("STUDENT"); // 🔥 important
-        return studentService.saveStudent(student);
+    public ResponseEntity<?> register(@RequestBody Student student) {
+        try {
+            student.setPlacementStatus("ACTIVE");
+            student.setRole("STUDENT");
+
+            Student saved = studentService.saveStudent(student);
+            return ResponseEntity.ok(saved);
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Registration failed: " + e.getMessage());
+        }
     }
 
-    // 🔐 Login
+    // 🔐 LOGIN (FIXED)
     @PostMapping("/login")
-    public Student login(@RequestBody Student student) {
-        return studentService.login(student.getEmail(), student.getPassword());
+    public ResponseEntity<?> login(@RequestBody Student student) {
+        try {
+            Student loggedIn = studentService.login(
+                    student.getEmail(),
+                    student.getPassword()
+            );
+
+            return ResponseEntity.ok(loggedIn);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body(e.getMessage());
+        }
     }
 
-    // 📄 Get all students (paginated)
+    // 📄 GET ALL STUDENTS
     @GetMapping
-    public Page<Student> getAllStudents(Pageable pageable) {
-        return studentService.getAllStudents(pageable);
+    public ResponseEntity<Page<Student>> getAllStudents(Pageable pageable) {
+        return ResponseEntity.ok(studentService.getAllStudents(pageable));
     }
 
-    // 🎯 Recommended jobs
+    // 🎯 RECOMMENDED JOBS
     @GetMapping("/{id}/recommended-jobs")
-    public List<JobPostDTO> getRecommendedJobs(@PathVariable Long id) {
-        return studentService.recommendJobs(id);
+    public ResponseEntity<List<JobPostDTO>> getRecommendedJobs(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.recommendJobs(id));
     }
 }
