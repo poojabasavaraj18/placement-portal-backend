@@ -1,130 +1,112 @@
 package com.college.placementportal.service;
 
+import com.college.placementportal.dto.ApplicationResponseDTO;
 import com.college.placementportal.entity.Application;
 import com.college.placementportal.entity.ApplicationStatus;
+import com.college.placementportal.entity.JobPost;
+import com.college.placementportal.entity.Student;
 import com.college.placementportal.repository.ApplicationRepository;
-import com.college.placementportal.dto.ApplicationResponseDTO;
+import com.college.placementportal.repository.JobPostRepository;
+import com.college.placementportal.repository.StudentRepository;
 
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @Service
 public class ApplicationService {
 
     private final ApplicationRepository applicationRepository;
+    private final StudentRepository studentRepository;
+    private final JobPostRepository jobPostRepository;
 
-    public ApplicationService(ApplicationRepository applicationRepository) {
+    public ApplicationService(ApplicationRepository applicationRepository,
+                              StudentRepository studentRepository,
+                              JobPostRepository jobPostRepository) {
         this.applicationRepository = applicationRepository;
+        this.studentRepository = studentRepository;
+        this.jobPostRepository = jobPostRepository;
     }
 
-    // 🔥 APPLY WITH FILE UPLOAD (UPDATED)
-    public Application apply(Application application, MultipartFile file) throws IOException {
+    // 🔥 FINAL APPLY METHOD (FIXED)
+    public Application apply(Long studentId, Long jobId, Application application, MultipartFile resume) {
 
-        // ✅ Create uploads folder dynamically
-        String uploadDir = System.getProperty("user.dir") + "/uploads/";
+        // ✅ FETCH STUDENT
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        File folder = new File(uploadDir);
-        if (!folder.exists()) {
-            folder.mkdirs();
+        // ✅ FETCH JOB
+        JobPost job = jobPostRepository.findById(jobId)
+                .orElseThrow(() -> new RuntimeException("Job not found"));
+
+        // ✅ SET RELATIONS
+        application.setStudent(student);
+        application.setJobPost(job);
+
+        // 🔥 DUPLICATE CHECK
+        if (applicationRepository.existsByStudent_IdAndJobPost_Id(studentId, jobId)) {
+            throw new RuntimeException("You already applied for this job");
         }
 
-        // ✅ Clean filename
-        String fileName = System.currentTimeMillis() + "_" +
-                file.getOriginalFilename().replaceAll("\\s+", "_");
+        try {
+            // 🔥 SAFETY CHECK (THIS WAS MISSING)
+            if (resume == null || resume.isEmpty()) {
+                throw new RuntimeException("Resume file is missing");
+            }
 
-        // ✅ Save file
-        String filePath = uploadDir + fileName;
-        file.transferTo(new File(filePath));
+            // 📁 FILE SAVE
+            String uploadDir = System.getProperty("user.dir") + "/uploads/";
+            String fileName = System.currentTimeMillis() + "_" + resume.getOriginalFilename();
 
-        // ✅ Save only filename in DB
-        application.setResumePath(fileName);
-        application.setStatus(ApplicationStatus.APPLIED);
+            java.io.File folder = new java.io.File(uploadDir);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+
+            java.io.File file = new java.io.File(uploadDir + fileName);
+            resume.transferTo(file);
+
+            application.setResumePath(fileName);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("File upload failed");
+        }
 
         return applicationRepository.save(application);
     }
 
-    // ✅ ALL APPLICATIONS
+    // ✅ STUDENT APPLICATIONS
+    public Page<ApplicationResponseDTO> getApplicationsByStudent(Long studentId, Pageable pageable) {
+        return applicationRepository.findByStudent_Id(studentId, pageable)
+                .map(app -> new ApplicationResponseDTO(
+                        app.getId(),
+                        app.getJobPost().getTitle(),
+                        app.getJobPost().getCompanyName(),
+                        app.getStatus(),
+                        app.getResumePath()
+                ));
+    }
+
+    // ✅ GET ALL
     public List<Application> getAllApplications() {
         return applicationRepository.findAll();
     }
 
-    // 🔹 STUDENT VIEW
-    public Page<ApplicationResponseDTO> getApplicationsByStudent(Long studentId, Pageable pageable) {
-
-        Page<Application> applications = applicationRepository.findByStudent_Id(studentId, pageable);
-
-        List<ApplicationResponseDTO> dtoList = applications.stream()
-                .map(app -> new ApplicationResponseDTO(
-                        app.getId(),
-                        app.getStudent().getName(),
-                        app.getJobPost().getTitle(),
-                        app.getJobPost().getCompanyName(),
-                        app.getStatus().name(),
-                        app.getAppliedDate(),
-                     app.getJobPost().getId()))
-                .toList();
-
-        return new PageImpl<>(dtoList, pageable, applications.getTotalElements());
-    }
-
-    // 🔥 RECRUITER VIEW
+    // ✅ GET BY JOB
     public List<Application> getApplicationsByJob(Long jobId) {
         return applicationRepository.findByJobPost_Id(jobId);
     }
 
-    // 🔥 UPDATE STATUS
-   public Application updateStatus(Long applicationId, ApplicationStatus status) {
+    // ✅ UPDATE STATUS
+    public Application updateStatus(Long id, ApplicationStatus status) {
+        Application app = applicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
 
-    Application application = applicationRepository.findById(applicationId)
-            .orElseThrow(() -> new RuntimeException("Application not found"));
-
-    ApplicationStatus currentStatus = application.getStatus();
-
-    // 🚨 Prevent invalid transitions
-    if (currentStatus == ApplicationStatus.REJECTED || currentStatus == ApplicationStatus.SELECTED) {
-        throw new RuntimeException("Cannot update status after final decision");
+        app.setStatus(status);
+        return applicationRepository.save(app);
     }
-
-    // 🚨 Optional: enforce proper flow
-    switch (status) {
-        case ROUND1:
-            if (currentStatus != ApplicationStatus.APPLIED) {
-                throw new RuntimeException("Must be APPLIED to move to ROUND1");
-            }
-            break;
-
-        case ROUND2:
-            if (currentStatus != ApplicationStatus.ROUND1) {
-                throw new RuntimeException("Must complete ROUND1 first");
-            }
-            break;
-
-        case HR:
-            if (currentStatus != ApplicationStatus.ROUND2) {
-                throw new RuntimeException("Must complete ROUND2 first");
-            }
-            break;
-
-        case SELECTED:
-        case REJECTED:
-            if (currentStatus != ApplicationStatus.HR) {
-                throw new RuntimeException("Final decision only after HR round");
-            }
-            break;
-
-        default:
-            break;
-    }
-
-    application.setStatus(status);
-
-    return applicationRepository.save(application);
-}
 }

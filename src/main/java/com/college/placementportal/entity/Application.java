@@ -3,6 +3,9 @@ package com.college.placementportal.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class Application {
 
@@ -10,17 +13,18 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 🔗 Student relation
+    // 🔗 Student relation (FIX: prevent infinite loop)
     @ManyToOne
     @JoinColumn(name = "student_id")
+    @JsonIgnore
     private Student student;
 
-    // 🔗 Job relation
+    // 🔗 Job relation (FIX: prevent lazy loading issues)
     @ManyToOne
     @JoinColumn(name = "job_post_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private JobPost jobPost;
 
-    
     // 📌 Status
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
@@ -118,8 +122,8 @@ public class Application {
         return cgpa;
     }
 
-    public void setCgpa(Double cgpa2) {
-        this.cgpa = cgpa2;
+    public void setCgpa(Double cgpa) {
+        this.cgpa = cgpa;
     }
 
     public String getSkills() {

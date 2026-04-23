@@ -43,7 +43,7 @@
 
 package com.college.placementportal.dto;
 
-import java.time.LocalDate;
+import com.college.placementportal.entity.ApplicationStatus;
 
 public class ApplicationResponseDTO {
 
@@ -51,29 +51,19 @@ public class ApplicationResponseDTO {
     private String studentName;
     private String jobTitle;
     private String companyName;
-    private String status;
-    private LocalDate appliedDate;
-    private Long jobId;
+    private ApplicationStatus status;   // ✅ FIXED
+    private String resumePath;
 
-    // ✅ CORRECT CONSTRUCTOR
-    public ApplicationResponseDTO(
-            Long id,
-            String studentName,
-            String jobTitle,
-            String companyName,
-            String status,
-            LocalDate appliedDate,
-            Long jobId
-    ) {
+    // ✅ CONSTRUCTOR
+    public ApplicationResponseDTO(Long id, String jobTitle, String companyName, ApplicationStatus status, String resumePath) {
         this.id = id;
-        this.studentName = studentName;
         this.jobTitle = jobTitle;
         this.companyName = companyName;
         this.status = status;
-        this.appliedDate = appliedDate;
-        this.jobId = jobId;
+        this.resumePath = resumePath;
     }
 
+    // ✅ GETTERS
     public Long getId() {
         return id;
     }
@@ -90,15 +80,11 @@ public class ApplicationResponseDTO {
         return companyName;
     }
 
-    public String getStatus() {
+    public ApplicationStatus getStatus() {
         return status;
     }
 
-    public LocalDate getAppliedDate() {
-        return appliedDate;
-    }
-
-    public Long getJobId() {
-        return jobId;
+    public String getResumePath() {
+        return resumePath;
     }
 }

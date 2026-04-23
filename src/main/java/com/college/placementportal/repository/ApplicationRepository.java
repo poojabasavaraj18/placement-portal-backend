@@ -12,10 +12,15 @@ import org.springframework.data.domain.Pageable;
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
 
+    // 👨‍🎓 Get applications for a specific student (used in dashboard)
     Page<Application> findByStudent_Id(Long studentId, Pageable pageable);
 
+    // 🏢 Get applications for a job (recruiter view)
     List<Application> findByJobPost_Id(Long jobPostId);
 
+    // 📊 Count by status
     long countByStatus(ApplicationStatus selected);
 
+    // 🔥 IMPORTANT FIX: prevent duplicate apply (per student + job)
+    boolean existsByStudent_IdAndJobPost_Id(Long studentId, Long jobPostId);
 }

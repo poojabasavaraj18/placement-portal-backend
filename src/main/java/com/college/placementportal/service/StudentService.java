@@ -24,17 +24,33 @@ public class StudentService {
         this.jobPostRepository = jobPostRepository;
     }
 
-    // ✅ Save student
+    // ✅ Register / Save Student
     public Student saveStudent(Student student) {
         return studentRepository.save(student);
     }
 
-    // ✅ Get all students (paginated)
+    // ✅ Login Logic
+    public Student login(String email, String password) {
+
+        Student student = studentRepository.findByEmail(email);
+
+        if (student == null) {
+            throw new RuntimeException("Student not found");
+        }
+
+        if (!student.getPassword().equals(password)) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        return student;
+    }
+
+    // ✅ Get all students (pagination)
     public Page<Student> getAllStudents(Pageable pageable) {
         return studentRepository.findAll(pageable);
     }
 
-    // 🔥 Recommendation Logic (UPDATED)
+    // 🔥 Job Recommendation Logic
     public List<JobPostDTO> recommendJobs(Long studentId) {
 
         Student student = studentRepository.findById(studentId)
@@ -56,7 +72,7 @@ public class StudentService {
                         job.getTitle(),
                         job.getSalary(),
                         job.getJobType(),
-                        job.getCompanyName() // ✅ FIXED
+                        job.getCompanyName()
                 ))
                 .collect(Collectors.toList());
     }
