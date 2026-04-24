@@ -91,4 +91,7 @@ public class StudentService {
                 ))
                 .collect(Collectors.toList());
     }
+    public void deleteUser(Long id) {
+    studentRepository.deleteById(id);
+}
 }

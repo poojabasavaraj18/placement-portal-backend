@@ -1,7 +1,6 @@
 package com.college.placementportal.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.util.Set;
 
 @Entity
@@ -12,102 +11,67 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    
-
     // 👤 Basic Info
-    @NotBlank(message = "Name is required")
     private String name;
 
     @Column(unique = true)
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
     private String email;
 
-    @NotBlank(message = "Password is required")
     private String password;
 
-    @NotBlank(message = "Placement status is required")
     private String placementStatus;
 
-    // 🔥 ROLE (THIS FIXES YOUR ISSUE)
-    @Column(nullable = false)
     private String role = "STUDENT";
+
+    // 🔥 NEW FIELDS
+    private String usn;
+    private Double cgpa;
+    private Integer year;
+    private String phone;
 
     // 🏫 Department
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
 
-    // 🛠 Skills
+    // 🛠 Skills (keep as is if already working)
     @ManyToMany
-    @JoinTable(
-        name = "student_skills",
-        joinColumns = @JoinColumn(name = "student_id"),
-        inverseJoinColumns = @JoinColumn(name = "skill_id")
-    )
     private Set<Skill> skills;
 
-    // ✅ Getters & Setters
+    // ✅ GETTERS & SETTERS
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public String getEmail() {
-        return email;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getPlacementStatus() { return placementStatus; }
+    public void setPlacementStatus(String placementStatus) { this.placementStatus = placementStatus; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getUsn() { return usn; }
+    public void setUsn(String usn) { this.usn = usn; }
 
-    public String getPlacementStatus() {
-        return placementStatus;
-    }
+    public Double getCgpa() { return cgpa; }
+    public void setCgpa(Double cgpa) { this.cgpa = cgpa; }
 
-    public void setPlacementStatus(String placementStatus) {
-        this.placementStatus = placementStatus;
-    }
+    public Integer getYear() { return year; }
+    public void setYear(Integer year) { this.year = year; }
 
-    // 🔥 ROLE GETTER & SETTER (IMPORTANT)
-    public String getRole() {
-        return role;
-    }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
+    public Department getDepartment() { return department; }
+    public void setDepartment(Department department) { this.department = department; }
 
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
-
-    public Set<Skill> getSkills() {
-        return skills;
-    }
-
-    public void setSkills(Set<Skill> skills) {
-        this.skills = skills;
-    }
+    public Set<Skill> getSkills() { return skills; }
+    public void setSkills(Set<Skill> skills) { this.skills = skills; }
 }
