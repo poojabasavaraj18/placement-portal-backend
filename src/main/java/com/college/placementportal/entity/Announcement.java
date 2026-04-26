@@ -12,12 +12,16 @@ public class Announcement {
 
     private String message;
 
-    // STUDENT / RECRUITER / DEPARTMENT
     private String target;
 
     private String createdBy;
 
     private LocalDateTime createdAt;
+
+    // 🔥 IMPORTANT (ADD THIS)
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     // ===== Getters & Setters =====
 
@@ -55,5 +59,13 @@ public class Announcement {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }

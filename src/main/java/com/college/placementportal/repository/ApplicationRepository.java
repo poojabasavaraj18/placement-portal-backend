@@ -23,4 +23,8 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
 
     // 🔥 IMPORTANT FIX: prevent duplicate apply (per student + job)
     boolean existsByStudent_IdAndJobPost_Id(Long studentId, Long jobPostId);
+
+    List<Application> findByStudentDepartmentId(Long departmentId);
+
+    List<Application> findByStudentId(Long studentId);
 }

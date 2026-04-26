@@ -6,6 +6,5 @@ import java.util.List;
 
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
 
-    // 🔥 filter by target
-    List<Announcement> findByTarget(String target);
+    List<Announcement> findByDepartmentId(Long departmentId);
 }

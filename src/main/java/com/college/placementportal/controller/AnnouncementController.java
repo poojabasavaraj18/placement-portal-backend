@@ -21,10 +21,10 @@ public class AnnouncementController {
     }
 
     // 🔥 GET by target
-    @GetMapping("/{target}")
-    public List<Announcement> getByTarget(@PathVariable String target) {
-        return service.getByTarget(target);
-    }
+    @GetMapping("/department/{deptId}")
+public List<Announcement> getByDepartment(@PathVariable Long deptId) {
+    return service.getByDepartment(deptId);
+}
 
     // 🔥 OPTIONAL: get all
     @GetMapping
