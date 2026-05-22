@@ -10,18 +10,37 @@ public class Announcement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String message;
 
+    @Column(nullable = false)
     private String target;
 
+    @Column(nullable = false)
     private String createdBy;
 
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // 🔥 IMPORTANT (ADD THIS)
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department department;
+
+    // 🔥 AUTO SET DEFAULT VALUES BEFORE INSERT
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+
+        if (createdBy == null) {
+            createdBy = "CDC";
+        }
+
+        if (target == null) {
+            target = "STUDENT";
+        }
+    }
 
     // ===== Getters & Setters =====
 
