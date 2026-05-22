@@ -31,3 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
+uploads/git rm -r --cached uploads
